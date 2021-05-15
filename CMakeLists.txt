@@ -64,6 +64,7 @@ add_executable(nori
   include/nori/transform.h
   include/nori/vector.h
   include/nori/warp.h
+  include/nori/volume.h
 
   # Source code files
   src/bitmap.cpp
@@ -88,6 +89,8 @@ add_executable(nori
   src/microfacet.cpp
   src/mirror.cpp
   src/dielectric.cpp
+  src/area.cpp
+  src/cmis.cpp
 )
 
 add_definitions(${NANOGUI_EXTRA_DEFS})

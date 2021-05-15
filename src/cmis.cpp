@@ -208,11 +208,14 @@ NORI_NAMESPACE_BEGIN
 		int emitter_count = 0;
 		int number_plane_gen = 0;
 		int n_samples = 0;
-		size_t nb_primitive;
+		size_t nb_primitive = 0;
 		SinglePlaneStrategy strategy;
-		bool stratified;
+		bool stratified = false;
 		std::vector<SinglePhotonPlane> planes;
 		std::vector<RectangularLightSource> rect_lights;
+
+		IntegratorSinglePlane(const PropertyList& props) {
+		};
 
 		static SinglePhotonPlane generate_plane(PlaneType t, std::vector<RectangularLightSource>& light, size_t id,
 		                                        Sampler* sampler, const HomogeneousVolume* m) {
@@ -466,6 +469,12 @@ NORI_NAMESPACE_BEGIN
 				return c;
 			}
 		}
+
+		std::string toString() const override {
+			return "IntegratorSinglePlane[]";
+		}
 	};
+
+	NORI_REGISTER_CLASS(IntegratorSinglePlane, "cmis");
 
 NORI_NAMESPACE_END
