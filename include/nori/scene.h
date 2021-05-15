@@ -120,6 +120,9 @@ public:
     std::string toString() const;
 
     EClassType getClassType() const { return EScene; }
+
+    /// Returns a randomly selected emitting mesh from the scene
+    Mesh* getRandomEmitterMesh(float& pd) const;
 private:
     std::vector<Mesh *> m_meshes;
     Integrator *m_integrator = nullptr;

@@ -65,6 +65,7 @@ add_executable(nori
   include/nori/vector.h
   include/nori/warp.h
   include/nori/volume.h
+  include/nori/integrator_utils.h
 
   # Source code files
   src/bitmap.cpp
@@ -91,6 +92,8 @@ add_executable(nori
   src/dielectric.cpp
   src/area.cpp
   src/cmis.cpp
+  src/integrator_utils.cpp
+  src/whitted.cpp
 )
 
 add_definitions(${NANOGUI_EXTRA_DEFS})

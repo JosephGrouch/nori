@@ -22,6 +22,8 @@
 #include <nori/frame.h>
 #include <nori/bbox.h>
 
+#include "dpdf.h"
+
 NORI_NAMESPACE_BEGIN
 
 /**
@@ -163,6 +165,9 @@ public:
      * */
     EClassType getClassType() const { return EMesh; }
 
+    /// Returns a sampled point from surface of this instance
+    float sampleSurface(const Point2f& sample, Vector3f& p, Normal3f& n) const;
+
 protected:
     /// Create an empty mesh
     Mesh();
@@ -176,6 +181,10 @@ protected:
     BSDF         *m_bsdf = nullptr;      ///< BSDF of the surface
     Emitter    *m_emitter = nullptr;     ///< Associated emitter, if any
     BoundingBox3f m_bbox;                ///< Bounding box of the mesh
+
+        // Discrete PDF instance for sampling the mesh
+    DiscretePDF   m_pdf;
+    float         m_total_surface_area = 0.0f;
 };
 
 NORI_NAMESPACE_END

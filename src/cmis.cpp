@@ -234,6 +234,7 @@ NORI_NAMESPACE_BEGIN
 			return SinglePhotonPlane{t, light[id], d, sample, sampler->next1D(), mrec.continued_t, id, m->sigma_s};
 		}
 
+		// TODO THIS NEEDS TO BE FIXED - IT IS HALF DONE
 		void preprocess(const Scene* scene) override {
 			Sampler* sampler = static_cast<Sampler*>(NoriObjectFactory::createInstance("independent", PropertyList()));
 
@@ -465,9 +466,9 @@ NORI_NAMESPACE_BEGIN
 				c += rho * transmittance * m->sigma_s * contrib * static_cast<float>(emitter_count) * (1.0f /
 					static_cast<float>(number_plane_gen));
 				//}
-
-				return c;
 			}
+
+			return c;
 		}
 
 		std::string toString() const override {

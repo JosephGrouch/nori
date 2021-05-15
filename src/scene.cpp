@@ -119,5 +119,30 @@ std::string Scene::toString() const {
     );
 }
 
+// Returns a random mesh from the emitting meshes in the scene
+Mesh* Scene::getRandomEmitterMesh(float& pd) const {
+    std::vector<uint32_t> emitter_indices;
+    DiscretePDF pdf;
+
+    for (uint32_t i = 0; i < m_meshes.size(); ++i) {
+        if (m_meshes[i]->isEmitter()) {
+            emitter_indices.push_back(i);
+            pdf.append(1.0f);
+        }
+    }
+
+    pdf.normalize();
+
+    if (emitter_indices.empty())
+        return nullptr;
+
+    // Probability is 1 / (no. of emitting meshes in scene)
+    uint32_t mesh_index = emitter_indices[pdf.sample(m_sampler->next1D(), pd)];
+    Mesh* mesh = m_meshes[mesh_index];
+
+    return mesh;
+}
+
+
 NORI_REGISTER_CLASS(Scene, "scene");
 NORI_NAMESPACE_END

@@ -38,6 +38,15 @@ void Mesh::activate() {
         m_bsdf = static_cast<BSDF *>(
             NoriObjectFactory::createInstance("diffuse", PropertyList()));
     }
+
+    // Initialize the mesh PDF with area of each of its triangles
+    for (uint32_t i = 0; i < getTriangleCount(); ++i) {
+        const float tri_area = surfaceArea(i);
+        m_total_surface_area += tri_area;
+        m_pdf.append(tri_area);
+    }
+
+    m_pdf.normalize();
 }
 
 float Mesh::surfaceArea(uint32_t index) const {
@@ -162,6 +171,53 @@ std::string Intersection::toString() const {
         indent(geoFrame.toString()),
         mesh ? mesh->toString() : std::string("null")
     );
+}
+
+/*
+ * Uniformly samples the surface of the mesh for a point, stores the sampled position and the
+ * interpolated surface normal, and returns the sampling probability density.
+ */
+float Mesh::sampleSurface(const Point2f& sample, Vector3f& pos, Normal3f& norm) const {
+    float x = sample.x();
+    float y = sample.y();
+
+    // Generate the random sample index from the PDF
+    const uint32_t index = m_pdf.sampleReuse(x);
+
+    // Calculate the barycentric coordinate for the point - note that this is the equivalent of
+    // warping square to uniform triangle in 3D
+    const float r = sqrt(1.0f - x);
+    const float alpha = 1.0f - r;
+    const float beta = y * r;
+    const Point3f bc = { alpha, beta, 1.0f - alpha - beta };
+
+    // Get the vertices of triangle at given index
+    const uint32_t i0 = m_F(0, index);
+    const uint32_t i1 = m_F(1, index);
+    const uint32_t i2 = m_F(2, index);
+
+    Point3f p0 = m_V.col(i0);
+    Point3f p1 = m_V.col(i1);
+    Point3f p2 = m_V.col(i2);
+
+    // Calculate the sampled point and store
+    pos = p0 * bc.x() + p1 * bc.y() + p2 * bc.z();
+
+    // Calculate and store normal components of sampled point
+    if (m_N.size() > 0) {
+        // Get normals of triangle at given index if they exist
+        Normal3f n0 = m_N.col(i0);
+        Normal3f n1 = m_N.col(i1);
+        Normal3f n2 = m_N.col(i2);
+
+        norm = (n0 * bc.x() + n1 * bc.y() + n2 * bc.z()).normalized();
+    }
+    else {
+        // Calculate the triangle normal manually if the normals matrix is empty
+        norm = (p1 - p0).cross(p2 - p0).normalized();
+    }
+
+    return m_pdf.getNormalization();
 }
 
 NORI_NAMESPACE_END
