@@ -20,6 +20,8 @@
 
 #include <nori/accel.h>
 
+#include "volume.h"
+
 NORI_NAMESPACE_BEGIN
 
 /**
@@ -58,6 +60,8 @@ public:
     /// Return a reference to an array containing all meshes
     const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
 
+    HomogeneousVolume* getVolume() const { return m_volume; }
+	
     /**
      * \brief Intersect a ray against all triangles stored in the scene
      * and return detailed intersection information
@@ -122,6 +126,7 @@ private:
     Sampler *m_sampler = nullptr;
     Camera *m_camera = nullptr;
     Accel *m_accel = nullptr;
+    HomogeneousVolume* m_volume = nullptr;
 };
 
 NORI_NAMESPACE_END
